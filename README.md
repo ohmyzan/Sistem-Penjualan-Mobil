@@ -1,4 +1,3 @@
-````markdown
 # 🚗 Sigma Automobil - Sistem Informasi Dealer Mobil Terintegrasi
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
@@ -17,17 +16,6 @@
 3. **Katalog Armada Dinamis:** Filter cerdas berdasarkan tipe mobil, dilengkapi manajemen status ketersediaan unit.
 4. **Member Area:** Dashboard khusus bagi pelanggan untuk melacak riwayat transaksi dan status pesanan.
 5. **Role-Based Access Control (RBAC):** Sistem manajemen akses ketat yang memisahkan otoritas antara Pelanggan, Admin (Operasional), dan Super Admin (Manajemen).
-
----
-
-## 📸 Tangkapan Layar (Screenshots)
-
-_(Akan diperbarui - Tempatkan screenshot aplikasi di sini)_
-
-- `[Screenshot Beranda & Katalog]`
-- `[Screenshot Form Login & Google SSO]`
-- `[Screenshot Admin Dashboard]`
-- `[Screenshot Pop-up Pembayaran Midtrans]`
 
 ---
 
@@ -79,6 +67,7 @@ erDiagram
         string snap_token "Token Midtrans"
     }
 ```
+
 ````
 
 ### 2. Use Case Diagram
@@ -291,3 +280,4 @@ Ikuti instruksi berikut untuk menjalankan proyek ini di mesin lokal Anda:
 ---
 
 _Dibuat untuk keperluan Proyek Web Programming 3 © 2026 Sigma Automobil._
+````
