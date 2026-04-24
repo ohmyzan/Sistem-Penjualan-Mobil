@@ -1,107 +1,134 @@
+````markdown
 # 🚗 Sigma Automobil — Sistem Informasi Dealer Mobil Terintegrasi
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
-![Midtrans](https://img.shields.io/badge/Midtrans-00A859?style=for-the-badge)
+![Midtrans](https://img.shields.io/badge/Midtrans-00A859?style=for-the-badge&logoColor=white)
 
-**Sigma Automobil** adalah aplikasi web untuk sistem informasi penjualan dan pemesanan mobil modern. Sistem ini membantu pelanggan mulai dari pencarian katalog kendaraan, pembuatan pesanan (SPK), hingga pembayaran _booking fee_ secara aman melalui **Payment Gateway Midtrans**.
+**Sigma Automobil** adalah aplikasi web berbasis **Laravel** untuk mendukung proses penjualan dan pemesanan kendaraan secara digital. Sistem dirancang agar pelanggan dapat mencari mobil, melakukan _booking_, membayar _booking fee_, hingga memantau status transaksi secara online.
 
-Di sisi internal, tersedia **Admin Dashboard** untuk mengelola data kendaraan, transaksi, pengguna, dan operasional dealer.
+Selain itu, tersedia **Dashboard Admin** untuk mengelola data mobil, tipe kendaraan, transaksi pelanggan, serta manajemen pengguna secara terpusat.
 
 ---
 
 # ✨ Fitur Unggulan
 
-## 🔐 1. Autentikasi Modern (SSO)
+## 🔐 1. Login Modern (Google SSO)
 
-Pengguna dapat mendaftar secara manual atau masuk cepat menggunakan **Google OAuth 2.0**.
+Pengguna dapat mendaftar manual atau login instan menggunakan **Google OAuth 2.0**.
 
-## 💳 2. Payment Gateway Otomatis
+## 💳 2. Sistem Pembayaran Hybrid
 
-Terintegrasi dengan **Midtrans Snap API** untuk pembayaran _booking fee_ dengan validasi otomatis melalui **Webhook / Callback**.
+Mendukung dua metode pembayaran:
+
+- **Midtrans Snap API** (otomatis)
+- **Transfer Manual** dengan upload bukti bayar
 
 ## 🚘 3. Katalog Mobil Dinamis
 
-Pencarian mobil lebih mudah dengan filter tipe kendaraan serta status ketersediaan unit.
+Menampilkan daftar mobil lengkap dengan:
 
-## 👤 4. Member Area
+- Tipe kendaraan
+- Tahun produksi
+- Harga
+- Warna
+- Kapasitas penumpang
+- Status stok
 
-Pelanggan dapat melihat riwayat transaksi, status pesanan, dan mengelola profil akun.
+## 👤 4. Member Dashboard
 
-## 🛡️ 5. Role-Based Access Control (RBAC)
+Pelanggan dapat melihat:
+
+- Riwayat booking
+- Status transaksi
+- Detail kendaraan yang dipesan
+- Profil akun
+
+## 🛡️ 5. Role Based Access Control
 
 Hak akses dibedakan menjadi:
 
-- **Pelanggan**
-- **Admin**
 - **Super Admin**
+- **Admin**
+- **Pelanggan**
 
-## 🎨 6. Modern UI/UX
+## 🎨 6. UI/UX Responsif
 
-Antarmuka bersih, responsif, dan nyaman digunakan di berbagai perangkat.
+Antarmuka modern, ringan, dan nyaman di desktop maupun mobile.
 
 ---
 
 # 📸 Screenshot
 
-> Tambahkan screenshot aplikasi pada bagian berikut:
+> Tambahkan gambar tampilan aplikasi pada bagian ini.
 
 - Beranda & Katalog Mobil
-- Login & Google SSO
+- Login Google
 - Dashboard Admin
+- Form Booking
 - Pembayaran Midtrans
+- Upload Bukti Transfer
 
 ---
 
-# 📊 Arsitektur Sistem (UML)
+# 📊 Pemodelan Sistem (UML)
 
-## 1. Entity Relationship Diagram (ERD)
+## 1️⃣ Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
-    USERS ||--o{ PESANANS : melakukan
+    USERS ||--o{ TRANSAKSIS : melakukan
     TIPES ||--o{ MOBILS : memiliki
-    MOBILS ||--o{ PESANANS : dipesan
+    MOBILS ||--o{ TRANSAKSIS : dipesan
 
     USERS {
         bigint id PK
         string nama
         string email
         string password
-        int role
         string google_id
+        tinyint role
+        string no_hp
+        text alamat
+        boolean status
     }
 
     TIPES {
         bigint id PK
         string nama_tipe
+        text deskripsi
     }
 
     MOBILS {
         bigint id PK
         bigint tipe_id FK
         string nama_mobil
+        int tahun
+        int stok
         string warna
+        bigint harga
         int kapasitas
-        decimal harga
         string gambar_mobil
     }
 
-    PESANANS {
+    TRANSAKSIS {
         bigint id PK
         bigint user_id FK
         bigint mobil_id FK
-        string kode_pesanan
-        date tanggal_pesan
-        string status_pembayaran
-        string snap_token
+        string kode_booking
+        string no_hp
+        text alamat_pengiriman
+        int booking_fee
+        string bukti_bayar
+        string status
     }
 ```
+````
 
 ---
 
-## 2. Use Case Diagram
+## 2️⃣ Use Case Diagram
 
 ```mermaid
 flowchart LR
@@ -111,12 +138,12 @@ flowchart LR
 
     subgraph SYSTEM [Sigma Automobil]
         UC1((Lihat Katalog))
-        UC2((Buat Pesanan))
-        UC3((Bayar Booking Fee))
+        UC2((Booking Mobil))
+        UC3((Pembayaran))
         UC4((Kelola Mobil))
-        UC5((Kelola Pesanan))
+        UC5((Kelola Transaksi))
         UC6((Kelola User))
-        UC7((Lihat Laporan))
+        UC7((Laporan))
     end
 
     P --> UC1
@@ -135,7 +162,7 @@ flowchart LR
 
 ---
 
-## 3. Sequence Diagram — Pemesanan & Pembayaran
+## 3️⃣ Sequence Diagram — Booking Mobil
 
 ```mermaid
 sequenceDiagram
@@ -144,25 +171,26 @@ sequenceDiagram
     participant DB as Database
     participant M as Midtrans
 
-    U->>S: Klik Pesan Mobil
-    S->>DB: Simpan transaksi (Pending)
-    DB-->>S: ID transaksi
+    U->>S: Pilih Mobil & Booking
+    S->>DB: Simpan transaksi Pending
+    DB-->>S: Data transaksi
 
-    S->>M: Request Snap Token
-    M-->>S: Snap Token
-
-    S-->>U: Tampilkan Popup Pembayaran
-    U->>M: Bayar
-
-    M->>S: Callback sukses
-    S->>DB: Update status = Success
-
-    S-->>U: Halaman sukses
+    alt Midtrans
+        S->>M: Request Snap Token
+        M-->>S: Token pembayaran
+        S-->>U: Tampilkan popup Midtrans
+        U->>M: Bayar
+        M->>S: Callback sukses
+        S->>DB: Update status Diproses
+    else Transfer Manual
+        U->>S: Upload bukti bayar
+        S->>DB: Simpan file bukti
+    end
 ```
 
 ---
 
-## 4. Class Diagram
+## 4️⃣ Class Diagram
 
 ```mermaid
 classDiagram
@@ -182,22 +210,24 @@ classDiagram
         +id
         +nama_mobil
         +harga
+        +stok
     }
 
-    class Pesanan {
+    class Transaksi {
         +id
-        +kode_pesanan
-        +status_pembayaran
+        +kode_booking
+        +status
+        +booking_fee
     }
 
-    User "1" --> "*" Pesanan
+    User "1" --> "*" Transaksi
     Tipe "1" --> "*" Mobil
-    Mobil "1" --> "*" Pesanan
+    Mobil "1" --> "*" Transaksi
 ```
 
 ---
 
-# 📁 Struktur Direktori
+# 📁 Struktur Folder
 
 ```text
 sigma-automobil/
@@ -214,9 +244,11 @@ sigma-automobil/
 ├── routes/
 │   └── web.php
 │
-└── database/
-    ├── migrations/
-    └── seeders/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+│
+└── public/
 ```
 
 ---
@@ -236,7 +268,7 @@ sigma-automobil/
 ## Persyaratan
 
 - PHP >= 8.1
-- Composer
+- Composer 2.x
 - MySQL / MariaDB
 - Node.js & NPM
 
@@ -261,32 +293,34 @@ npm run build
 
 ---
 
-## 3. Konfigurasi `.env`
+## 3. Konfigurasi Environment
 
 ```bash
 cp .env.example .env
 ```
 
-Isi konfigurasi:
+Isi file `.env`
 
 ```env
+APP_NAME="Sigma Automobil"
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=db_sigma_automobil
+DB_DATABASE=db_project_penjualan_mobil
 DB_USERNAME=root
 DB_PASSWORD=
 
 MIDTRANS_SERVER_KEY=your_server_key
 MIDTRANS_CLIENT_KEY=your_client_key
 
-GOOGLE_CLIENT_ID=your_google_id
-GOOGLE_CLIENT_SECRET=your_google_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
 ---
 
-## 4. Generate Key & Migrasi
+## 4. Generate Key & Migrasi Database
 
 ```bash
 php artisan key:generate
@@ -303,13 +337,13 @@ php artisan storage:link
 
 ---
 
-## 6. Jalankan Aplikasi
+## 6. Jalankan Server
 
 ```bash
 php artisan serve
 ```
 
-Akses di browser:
+Buka browser:
 
 ```text
 http://127.0.0.1:8000
@@ -317,19 +351,23 @@ http://127.0.0.1:8000
 
 ---
 
-# 📌 Teknologi yang Digunakan
+# 🛠️ Teknologi yang Digunakan
 
 - Laravel
 - Bootstrap
 - MySQL
+- JavaScript
 - Midtrans API
 - Google OAuth
-- JavaScript
 - Blade Template Engine
 
 ---
 
 # 👨‍💻 Developer
 
-Dibuat untuk keperluan **Project Web Programming 3**  
-© 2026 Sigma Automobil
+Dibuat untuk keperluan **Project Web Programming 3**
+© 2026 **Sigma Automobil**
+
+```
+
+```
