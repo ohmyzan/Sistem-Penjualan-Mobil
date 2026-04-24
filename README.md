@@ -1,3 +1,4 @@
+````markdown
 # 🚗 Sigma Automobil - Sistem Informasi Dealer Mobil Terintegrasi
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
@@ -18,6 +19,21 @@
 5. **Role-Based Access Control (RBAC):** Sistem manajemen akses ketat yang memisahkan otoritas antara Pelanggan, Admin (Operasional), dan Super Admin (Manajemen).
 
 ---
+
+## 📸 Tangkapan Layar (Screenshots)
+
+_(Akan diperbarui - Tempatkan screenshot aplikasi di sini)_
+
+- `[Screenshot Beranda & Katalog]`
+- `[Screenshot Form Login & Google SSO]`
+- `[Screenshot Admin Dashboard]`
+- `[Screenshot Pop-up Pembayaran Midtrans]`
+
+---
+
+## 📊 Arsitektur & Pemodelan Sistem (UML)
+
+Diagram di bawah ini dirender secara otomatis menggunakan sintaks Mermaid.js untuk memetakan alur bisnis Sigma Automobil.
 
 ### 1. Entity Relationship Diagram (ERD) & Logical Record Structure (LRS)
 
@@ -63,7 +79,6 @@ erDiagram
         string snap_token "Token Midtrans"
     }
 ```
-
 ````
 
 ### 2. Use Case Diagram
@@ -72,23 +87,20 @@ Memetakan batas interaksi antara aktor (Pelanggan, Admin, Super Admin) dengan si
 
 ```mermaid
 flowchart LR
-    %% Aktor
     P([Pelanggan / Role 2])
     A([Admin / Role 0])
     SA([Super Admin / Role 1])
 
-    %% Sistem Operasi
-    subgraph SIGMA AUTOMOBIL SYSTEM
+    subgraph System ["SIGMA AUTOMOBIL SYSTEM"]
         UC1((Akses Katalog & Promosi))
         UC2((Buat Pesanan & SPK))
-        UC3((Bayar Booking Fee via Midtrans))
+        UC3((Bayar Booking Fee))
         UC4((Kelola Data Tipe & Mobil))
-        UC5((Verifikasi & Cetak PDF Pesanan))
-        UC6((Kelola Hak Akses Pengguna))
-        UC7((Akses Analitik Dashboard))
+        UC5((Verifikasi Pesanan))
+        UC6((Kelola Hak Akses))
+        UC7((Akses Analitik))
     end
 
-    %% Relasi
     P --> UC1
     P --> UC2
     P --> UC3
@@ -110,21 +122,21 @@ Menggambarkan interaksi _real-time_ objek dari sisi klien, server, database, hin
 
 ```mermaid
 sequenceDiagram
-    actor Pelanggan
-    participant Sistem (Laravel)
-    participant Database
-    participant Midtrans API
+    participant P as Pelanggan
+    participant S as Sistem (Laravel)
+    participant DB as Database
+    participant M as Midtrans API
 
-    Pelanggan->>Sistem (Laravel): Klik "Pesan Unit Ini"
-    Sistem (Laravel)->>Database: Simpan Transaksi (Status: PENDING)
-    Database-->>Sistem (Laravel): Kembalikan ID Pesanan
-    Sistem (Laravel)->>Midtrans API: Request Snap Token (Kirim Harga & Item)
-    Midtrans API-->>Sistem (Laravel): Return Snap Token string
-    Sistem (Laravel)-->>Pelanggan: Menampilkan Midtrans Snap UI (Pop-up)
-    Pelanggan->>Midtrans API: Input Metode Pembayaran (BCA/Gopay/dll)
-    Midtrans API->>Sistem (Laravel): Webhook / Callback Notification (Status: SETTLEMENT)
-    Sistem (Laravel)->>Database: Update Status Transaksi -> SUCCESS
-    Sistem (Laravel)-->>Pelanggan: Redirect Halaman Sukses / Cetak Invoice
+    P->>S: Klik "Pesan Unit Ini"
+    S->>DB: Simpan Transaksi (Status PENDING)
+    DB-->>S: Kembalikan ID Pesanan
+    S->>M: Request Snap Token (Kirim Harga & Item)
+    M-->>S: Return Snap Token
+    S-->>P: Tampilkan UI Pembayaran Midtrans
+    P->>M: Input Metode Pembayaran (BCA/Qris/dll)
+    M->>S: Webhook / Callback (Status SETTLEMENT)
+    S->>DB: Update Transaksi menjadi SUCCESS
+    S-->>P: Redirect ke Halaman Sukses
 ```
 
 ### 4. Class Diagram (Model MVC)
@@ -138,28 +150,28 @@ classDiagram
         +string nama
         +string email
         +int role
-        +pesanans() HasMany
+        +pesanans()
     }
     class Tipe {
         +int id
         +string nama_tipe
-        +mobils() HasMany
+        +mobils()
     }
     class Mobil {
         +int id
         +int tipe_id
         +string nama_mobil
         +decimal harga
-        +tipe() BelongsTo
-        +pesanans() HasMany
+        +tipe()
+        +pesanans()
     }
     class Pesanan {
         +int id
         +int user_id
         +int mobil_id
         +string status_pembayaran
-        +user() BelongsTo
-        +mobil() BelongsTo
+        +user()
+        +mobil()
     }
 
     User "1" -- "*" Pesanan : memiliki >
@@ -169,13 +181,34 @@ classDiagram
 
 ---
 
+## 📁 Struktur Direktori Utama
+
+Proyek ini mengadopsi pemisahan folder yang ketat antara _Frontend_ (Pengunjung) dan _Backend_ (Admin Panel).
+
+```text
+sigma-automobil/
+├── app/
+│   ├── Http/Controllers/
+│   │   ├── Frontend/     # Logika bisnis untuk halaman pengunjung & member
+│   │   └── Backend/      # Logika bisnis untuk dashboard admin
+│   └── Models/           # Struktur Database (User, Mobil, Tipe, Pesanan)
+├── routes/
+│   └── web.php           # Konfigurasi routing & Middleware
+└── resources/
+    └── views/
+        ├── frontend/     # Tampilan (UI) publik & keranjang
+        └── backend/      # Tampilan (UI) Admin Panel
+```
+
+---
+
 ## 👥 Hak Akses Kredensial (Testing)
 
 | Role                | Keterangan Akses                   | Email Default          | Password   |
 | :------------------ | :--------------------------------- | :--------------------- | :--------- |
 | **Super Admin (1)** | Akses seluruh fitur + Data User    | `superadmin@gmail.com` | `password` |
-| **Admin (0)**       | Akses operasional armada & pesanan | `ichwan@gmail.com`      | `password` |
-| **Pelanggan (2)**   | Akses halaman utama & _checkout_   | `mario@gmail.com`       | `password` |
+| **Admin (0)**       | Akses operasional armada & pesanan | `ichwan@gmail.com`     | `password` |
+| **Pelanggan (2)**   | Akses halaman utama & _checkout_   | `mario@gmail.com`      | `password` |
 
 *(Gunakan email di atas untuk pengujian, atau jalankan seeder untuk *generate* ulang data).*
 
@@ -258,5 +291,3 @@ Ikuti instruksi berikut untuk menjalankan proyek ini di mesin lokal Anda:
 ---
 
 _Dibuat untuk keperluan Proyek Web Programming 3 © 2026 Sigma Automobil._
-
-````
