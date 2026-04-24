@@ -85,7 +85,14 @@ erDiagram
         varchar bukti_bayar
         varchar status
     }
-2. Use Case DiagramMemetakan batas interaksi antara aktor (Pelanggan, Admin, Super Admin) dengan sistem.Cuplikan kodeflowchart LR
+```
+
+### 2. Use Case Diagram
+
+Memetakan batas interaksi antara aktor (Pelanggan, Admin, Super Admin) dengan sistem.
+
+```mermaid
+flowchart LR
     P([Pelanggan / Role 2])
     A([Admin / Role 0])
     SA([Super Admin / Role 1])
@@ -113,7 +120,14 @@ erDiagram
     SA --> UC5
     SA --> UC6
     SA --> UC7
-3. Sequence Diagram: Alur Pemesanan & Pembayaran OtomatisMenggambarkan interaksi real-time sistem dengan Midtrans API.Cuplikan kodesequenceDiagram
+```
+
+### 3. Sequence Diagram: Alur Pemesanan & Pembayaran Otomatis
+
+Menggambarkan interaksi real-time sistem dengan Midtrans API.
+
+```mermaid
+sequenceDiagram
     participant P as Pelanggan
     participant S as Sistem (Laravel)
     participant DB as Database
@@ -130,7 +144,14 @@ erDiagram
     M->>S: Webhook / API Callback
     S->>DB: Update Status Transaksi ke DIPROSES
     S-->>P: Tampilkan Invoice Lunas
-4. Class Diagram (Model MVC)Representasi relasi struktur kode Object-Oriented pada Model Laravel.Cuplikan kodeclassDiagram
+```
+
+### 4. Class Diagram (Model MVC)
+
+Representasi relasi struktur kode Object-Oriented pada Model Laravel.
+
+```mermaid
+classDiagram
     class User {
         +int id
         +string nama
@@ -170,27 +191,69 @@ erDiagram
     User "1" -- "*" Transaksi : melakukan >
     Tipe "1" -- "*" Mobil : memiliki >
     Mobil "1" -- "*" Transaksi : terhubung >
-📁 Struktur Direktori UtamaProyek ini mengadopsi arsitektur MVC Laravel dengan penempatan Controller yang terpusat untuk pengunjung dan terpisah khusus untuk operasional Admin.Plaintextsigma-automobil/
-├── app/
-│   ├── Http/Controllers/
-│   │   ├── Backend/                  # Logika operasional khusus Admin Dashboard
-│   │   ├── AuthController.php        # Menangani Login & Register
-│   │   ├── BerandaController.php     # Logika halaman depan (Katalog pengunjung)
-│   │   ├── FrontendController.php    # Logika keranjang & pesanan pelanggan
-│   │   └── GoogleAuthController.php  # Integrasi SSO OAuth 2.0
-│   └── Models/                       # Struktur Entitas (User, Mobil, Tipe, Transaksi)
-├── routes/
-│   └── web.php                       # Konfigurasi routing & pengamanan Middleware
-└── resources/
-    └── views/
-        ├── frontend/                 # UI pengunjung & Pelanggan
-        └── backend/                  # UI Admin Panel
-👥 Hak Akses Kredensial (Testing)RoleKeterangan AksesEmail DefaultPasswordSuper Admin (1)Akses seluruh fitur + Data Usersuperadmin@gmail.compasswordAdmin (0)Akses operasional armada & transaksiichwan@gmail.compasswordPelanggan (2)Akses halaman utama & booking mobilmario@gmail.compassword(Gunakan email di atas untuk pengujian, atau jalankan seeder untuk generate ulang data).🚀 Panduan Instalasi (Local Development)Ikuti instruksi berikut untuk menjalankan proyek ini di mesin lokal Anda:Persyaratan SistemPHP >= 8.1Composer 2.xMySQL / MariaDBNode.js & NPMLangkah InstalasiKloning RepositoriBashgit clone [https://github.com/USERNAME_ANDA/sigma-automobil.git](https://github.com/USERNAME_ANDA/sigma-automobil.git)
+```
+
+---
+
+## 📁 Struktur Direktori Utama
+
+Proyek ini mengadopsi arsitektur MVC Laravel dengan penempatan Controller yang terpusat untuk pengunjung dan terpisah khusus untuk operasional Admin.
+
+```
+
+---
+
+## 👥 Hak Akses Kredensial (Testing)
+
+| Role | Keterangan Akses | Email Default | Password |
+|---|---|---|---|
+| **Super Admin (1)** | Akses seluruh fitur + Data User | `superadmin@gmail.com` | `password` |
+| **Admin (0)** | Akses operasional armada & transaksi | `ichwan@gmail.com` | `password` |
+| **Pelanggan (2)** | Akses halaman utama & booking mobil | `mario@gmail.com` | `password` |
+
+> Gunakan email di atas untuk pengujian, atau jalankan seeder untuk generate ulang data.
+
+---
+
+## 🚀 Panduan Instalasi (Local Development)
+
+Ikuti instruksi berikut untuk menjalankan proyek ini di mesin lokal Anda:
+
+### Persyaratan Sistem
+
+- PHP >= 8.1
+- Composer 2.x
+- MySQL / MariaDB
+- Node.js & NPM
+
+### Langkah Instalasi
+
+#### 1. Kloning Repositori
+
+```bash
+git clone https://github.com/USERNAME_ANDA/sigma-automobil.git
 cd sigma-automobil
-Install Library & DependenciesBashcomposer install
+```
+
+#### 2. Install Library & Dependencies
+
+```bash
+composer install
 npm install && npm run build
-Konfigurasi EnvironmentSalin file konfigurasi bawaan dan sesuaikan nilainya:Bashcp .env.example .env
-Buka file .env dan atur konfigurasi database serta API:Cuplikan kodeDB_CONNECTION=mysql
+```
+
+#### 3. Konfigurasi Environment
+
+Salin file konfigurasi bawaan dan sesuaikan nilainya:
+
+```bash
+cp .env.example .env
+```
+
+Buka file `.env` dan atur konfigurasi database serta API:
+
+```env
+DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=db_project_penjualan_mobil
@@ -204,9 +267,29 @@ MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxxxxxxxxxx
 # GOOGLE OAUTH
 GOOGLE_CLIENT_ID=xxxxxxxxxxxx.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=xxxxxxxxxxxx
-Generate Application Key & Sinkronisasi DatabaseBashphp artisan key:generate
-php artisan migrate:fresh --seed
-Symlink Storage (Untuk Gambar Armada)Bashphp artisan storage:link
-Jalankan AplikasiBashphp artisan serve
-Aplikasi siap diakses di http://127.0.0.1:8000Dibuat untuk keperluan Proyek Web Programming 3 © 2026 Sigma Automobil.
 ```
+
+#### 4. Generate Application Key & Sinkronisasi Database
+
+```bash
+php artisan key:generate
+php artisan migrate:fresh --seed
+```
+
+#### 5. Symlink Storage (Untuk Gambar Armada)
+
+```bash
+php artisan storage:link
+```
+
+#### 6. Jalankan Aplikasi
+
+```bash
+php artisan serve
+```
+
+Aplikasi siap diakses di http://127.0.0.1:8000
+
+---
+
+Dibuat untuk keperluan Proyek Web Programming 3 © 2026 Sigma Automobil.
