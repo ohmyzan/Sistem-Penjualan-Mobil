@@ -1,66 +1,178 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Pilihan yang sangat brilian! Daripada repot menggambar di aplikasi terpisah (seperti Visio atau Draw.io) lalu mengekspornya sebagai gambar, kita bisa menggunakan **Mermaid.js**.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Berita baiknya: **GitHub secara otomatis mendukung kode Mermaid!** Jadi, Anda cukup menyalin kode di bawah ini, dan GitHub akan langsung menyulapnya menjadi diagram visual yang interaktif dan sangat profesional di halaman repositori Anda.
 
-## About Laravel
+Berikut adalah versi final `README.md` Anda, lengkap dengan visualisasi ERD dan Use Case Diagram yang siap pakai:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Salin Kode di Bawah Ini ke dalam file `README.md` Anda:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+````markdown
+# 🚗 Sigma Automobil (Sistem Informasi Penjualan Mobil)
 
-## Learning Laravel
+Sigma Automobil adalah aplikasi web sistem informasi dealer mobil modern yang dibangun menggunakan framework Laravel. Aplikasi ini dirancang untuk memudahkan pelanggan dalam mencari katalog mobil, melakukan pemesanan (SPK), dan melakukan pembayaran _Booking Fee_ secara otomatis, sekaligus memberikan kemudahan bagi manajemen dealer melalui _Dashboard Admin_ yang komprehensif.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Teknologi yang Digunakan
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Framework:** Laravel (PHP)
+- **Frontend:** Bootstrap 5, HTML, CSS (Classic Modern UI)
+- **Database:** MySQL
+- **Payment Gateway:** Midtrans (Sandbox)
+- **Authentication:** Google OAuth 2.0 (SSO)
+- **Grafik/Visualisasi:** Chart.js
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## ✨ Fitur Unggulan
 
-## Laravel Sponsors
+- **Sistem Otentikasi Ganda:** Pengguna dapat mendaftar secara manual atau masuk cepat menggunakan Akun Google (Single Sign-On).
+- **Payment Gateway Otomatis:** Integrasi Midtrans Snap untuk pembayaran _Booking Fee_ yang otomatis mengubah status pesanan.
+- **Dashboard Analitik:** Visualisasi data pesanan dan penjualan menggunakan grafik Chart.js secara _real-time_.
+- **Manajemen Katalog:** Admin dapat mengatur tipe, merk, harga, dan gambar mobil dengan mudah.
+- **Member Area Premium:** Halaman profil pelanggan untuk memantau status pesanan mereka.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 📸 Tangkapan Layar (Screenshots)
 
-### Premium Partners
+_(Segera Hadir - Akan diperbarui dengan tangkapan layar Beranda, Katalog, dan Dashboard Admin)_
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## 📊 Pemodelan Sistem (UML & ERD)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Entity Relationship Diagram (ERD) & Logical Record Structure (LRS)
 
-## Code of Conduct
+Diagram di bawah ini merepresentasikan struktur relasi antar tabel dalam basis data Sigma Automobil.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```mermaid
+erDiagram
+    USER ||--o{ PESANAN : "melakukan"
+    TIPE ||--o{ MOBIL : "mengkategorikan"
+    MOBIL ||--o{ PESANAN : "dipesan dalam"
 
-## Security Vulnerabilities
+    USER {
+        bigint id PK
+        string nama
+        string email
+        string password
+        int role "0:Admin, 1:SuperAdmin, 2:Pelanggan"
+    }
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    TIPE {
+        bigint id PK
+        string nama_tipe
+    }
 
-## License
+    MOBIL {
+        bigint id PK
+        bigint tipe_id FK
+        string nama_mobil
+        string warna
+        int kapasitas
+        decimal harga
+        string gambar_mobil
+    }
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    PESANAN {
+        bigint id PK
+        bigint user_id FK
+        bigint mobil_id FK
+        date tanggal_pesan
+        string status_pembayaran
+    }
+```
+````
+
+### 2. Use Case Diagram
+
+Menggambarkan interaksi hak akses (_role_) dengan fitur-fitur yang ada di dalam sistem.
+
+```mermaid
+flowchart LR
+    %% Definisi Aktor
+    P([Pelanggan / Role 2])
+    A([Admin / Role 0])
+    SA([Super Admin / Role 1])
+
+    %% Definisi Use Case
+    UC1((Lihat Katalog & Promo))
+    UC2((Buat Pesanan Mobil))
+    UC3((Bayar via Midtrans))
+    UC4((Kelola Data Mobil & Tipe))
+    UC5((Validasi Data Pesanan))
+    UC6((Kelola Akses Pengguna))
+    UC7((Akses Dashboard Grafik))
+
+    %% Relasi Aktor ke Use Case
+    P --> UC1
+    P --> UC2
+    P --> UC3
+
+    A --> UC1
+    A --> UC4
+    A --> UC5
+    A --> UC7
+
+    SA --> UC4
+    SA --> UC5
+    SA --> UC6
+    SA --> UC7
+```
+
+---
+
+## 👥 Role & Akses (Hak Akses)
+
+Sistem ini menggunakan _middleware_ untuk membatasi akses:
+
+1. **Super Admin (Role 1):** Memiliki akses penuh ke seluruh sistem, grafik analitik, dan manajemen tingkat _User_.
+2. **Admin (Role 0):** Memiliki akses ke pengelolaan data operasional dealer (katalog mobil, tipe, dan validasi pesanan).
+3. **Pelanggan (Role 2):** Akses ke area publik (katalog, promosi), pemesanan mobil, pembayaran Midtrans, dan Member Area.
+
+**Kredensial Testing Default:**
+
+- **Akun Admin:** `admin@sigmaautomobil.com` | Password: `password`
+
+---
+
+## 🚀 Panduan Instalasi (Local Setup)
+
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini di _local environment_ (Laragon/XAMPP):
+
+1. **Clone Repositori**
+
+    ```bash
+    git clone [https://github.com/username-anda/sigma-automobil.git](https://github.com/username-anda/sigma-automobil.git)
+    cd sigma-automobil
+    ```
+
+2. **Install Dependencies**
+
+    ```bash
+    composer install
+    npm install && npm run build
+    ```
+
+3. **Setup Environment (.env)**
+    - Duplikat file `.env.example` menjadi `.env`.
+    - Sesuaikan koneksi database Anda:
+        ```env
+        DB_CONNECTION=mysql
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_DATABASE=db_sigma_automobil
+        DB_USERNAME=root
+        DB_PASSWORD=
+        ```
+    - **PENTING:** Masukkan API Key Midtrans & Client ID Google OAuth Anda di konfigurasi `.env`.
+
+4. **Generate Application Key & Migrasi Database**
+
+    ```bash
+    php artisan key:generate
+    php artisan migrate --seed
+    ```
+
+5. **Jalankan Server Lokal**
+    ```bash
+    php artisan serve
+    ```
+    Buka `http://localhost:8000` di browser Anda.
