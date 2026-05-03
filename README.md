@@ -98,10 +98,10 @@ flowchart LR
     SA([Super Admin / Role 1])
 
     subgraph System [SIGMA AUTOMOBIL SYSTEM]
-        UC1((Akses Katalog & Promosi))
+        UC1((Akses Katalog &amp; Promosi))
         UC2((Buat Transaksi Booking))
         UC3((Bayar DP via Midtrans))
-        UC4((Kelola Data Tipe & Mobil))
+        UC4((Kelola Data Tipe &amp; Mobil))
         UC5((Pantau Data Transaksi))
         UC6((Kelola Hak Akses User))
         UC7((Akses Dashboard Analitik))
@@ -133,7 +133,7 @@ sequenceDiagram
     participant DB as Database
     participant M as Midtrans API
 
-    P->>S: Klik Pesan & Isi Alamat Kirim
+    P->>S: Klik Pesan &amp; Isi Alamat Kirim
     S->>S: Generate kode_booking unik
     S->>DB: Simpan Transaksi (Status PENDING)
     DB-->>S: Return Data Transaksi
@@ -193,23 +193,92 @@ classDiagram
     Mobil "1" -- "*" Transaksi : terhubung >
 ```
 
+### 5. Activity Diagram: Alur Pemesanan Lengkap (Swimlane)
+
+Diagram ini menjelaskan aktivitas langkah demi langkah dari proses pemilihan mobil hingga pembaruan status transaksi secara otomatis.
+
+```mermaid
+flowchart TD
+    %% =========================
+    %% Titik Mulai &amp; Selesai
+    %% =========================
+    Start((Mulai))
+    End((Selesai))
+
+    %% =========================
+    %% Swimlane: Pelanggan
+    %% =========================
+    subgraph Pelanggan [Aktor: Pelanggan]
+        direction TB
+        A1[Login / SSO Google]
+        A2[Lihat Katalog Mobil]
+        A3[Pilih Unit &amp; Klik Booking]
+        A4[Isi Form Alamat Pengiriman]
+        A5[Selesaikan Pembayaran di UI Midtrans]
+        A6[Cek Member Area: Transaksi Berhasil]
+    end
+
+    %% =========================
+    %% Swimlane: Sistem
+    %% =========================
+    subgraph Sistem [Sistem: Sigma Automobil]
+        direction TB
+        S1[Generate kode_booking &amp; Simpan Transaksi PENDING]
+        S2[Kirim Request Snap Token]
+        S3[Terima Token &amp; Tampilkan Pop-up Snap]
+        S4[Terima Webhook / Callback Notification]
+        S5[Validasi Signature &amp; Update Status DIPROSES]
+    end
+
+    %% =========================
+    %% Swimlane: Midtrans
+    %% =========================
+    subgraph Midtrans [Sistem: Midtrans API]
+        direction TB
+        M1[Proses Generate Token]
+        M2[Validasi Pembayaran Pelanggan]
+    end
+
+    %% =========================
+    %% Alur Aktivitas
+    %% =========================
+    Start --> A1
+    A1 --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 --> S1
+    S1 --> S2
+    S2 --> M1
+    M1 --> S3
+    S3 --> A5
+    A5 --> M2
+    M2 --> S4
+    S4 --> S5
+    S5 --> A6
+    A6 --> End
+
+    %% =========================
+    %% Styling
+    %% =========================
+    classDef startEnd fill:#333,stroke:#fff,stroke-width:2px,color:#fff;
+    class Start,End startEnd;
+```
+
 ---
 
 ## 📁 Struktur Direktori Utama
 
 Proyek ini mengadopsi arsitektur MVC Laravel dengan penempatan Controller yang terpusat untuk pengunjung dan terpisah khusus untuk operasional Admin.
 
-```
-
 ---
 
 ## 👥 Hak Akses Kredensial (Testing)
 
-| Role | Keterangan Akses | Email Default | Password |
-|---|---|---|---|
-| **Super Admin (1)** | Akses seluruh fitur + Data User | `superadmin@gmail.com` | `password` |
-| **Admin (0)** | Akses operasional armada & transaksi | `ichwan@gmail.com` | `password` |
-| **Pelanggan (2)** | Akses halaman utama & booking mobil | `mario@gmail.com` | `password` |
+| Role                | Keterangan Akses                     | Email Default          | Password   |
+| ------------------- | ------------------------------------ | ---------------------- | ---------- |
+| **Super Admin (1)** | Akses seluruh fitur + Data User      | `superadmin@gmail.com` | `password` |
+| **Admin (0)**       | Akses operasional armada & transaksi | `ichwan@gmail.com`     | `password` |
+| **Pelanggan (2)**   | Akses halaman utama & booking mobil  | `mario@gmail.com`      | `password` |
 
 > Gunakan email di atas untuk pengujian, atau jalankan seeder untuk generate ulang data.
 
