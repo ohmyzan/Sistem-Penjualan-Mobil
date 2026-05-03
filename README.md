@@ -133,7 +133,7 @@ sequenceDiagram
     participant DB as Database
     participant M as Midtrans API
 
-    P->>S: Klik Pesan &amp; Isi Alamat Kirim
+    P->>S: Klik Pesan & Isi Alamat Kirim
     S->>S: Generate kode_booking unik
     S->>DB: Simpan Transaksi (Status PENDING)
     DB-->>S: Return Data Transaksi
