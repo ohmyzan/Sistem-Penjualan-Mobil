@@ -18,6 +18,7 @@ class Transaksi extends Model
         'alamat_pengiriman',
         'booking_fee',
         'bukti_bayar',
+        'snap_token', // tambah ini
         'status',
     ];
 

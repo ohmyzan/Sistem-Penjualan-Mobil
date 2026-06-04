@@ -63,8 +63,11 @@
                     </button>
 
                     <div class="mt-3">
-                        <a href="{{ route('beranda') }}" class="small text-muted text-decoration-none">Batal dan kembali ke
-                            Beranda</a>
+                        <a href="{{ route('booking.cancel', $transaksi->kode_booking) }}"
+                            class="small text-muted text-decoration-none"
+                            onclick="return confirm('Yakin ingin membatalkan pesanan ini?')">
+                            Batal dan kembali ke Beranda
+                        </a>
                     </div>
                 </div>
             </div>
@@ -91,8 +94,9 @@
                     console.log(result);
                 },
                 onClose: function() {
-                    /* Jika user menutup pop-up sebelum selesai membayar */
-                    alert('Anda menutup jendela pembayaran sebelum menyelesaikannya.');
+                    if (confirm('Anda menutup jendela pembayaran. Batalkan pesanan ini?')) {
+                        window.location.href = "{{ route('booking.cancel', $transaksi->kode_booking) }}";
+                    }
                 }
             });
         };

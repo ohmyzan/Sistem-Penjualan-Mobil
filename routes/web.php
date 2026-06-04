@@ -12,24 +12,22 @@ use App\Http\Controllers\GoogleAuthController;
 | FRONTEND ROUTES (Publik & Pelanggan)
 |--------------------------------------------------------------------------
 */
-// GRUP FRONTEND UMUM (Hanya untuk Tamu & Pelanggan, Admin dilarang masuk!)
+
 Route::middleware(['tolak_admin'])->group(function () {
     Route::get('/', [FrontendController::class, 'index'])->name('beranda');
     Route::get('/mobil/{id}', [FrontendController::class, 'show'])->name('detail.mobil');
 });
 
-// GRUP FRONTEND KHUSUS PELANGGAN (Harus Login DAN Harus Role 2)
 Route::middleware(['auth', 'role:2'])->group(function () {
     Route::get('/mobil/{id}/booking', [FrontendController::class, 'booking'])->name('booking.mobil');
     Route::post('/booking/store', [FrontendController::class, 'bookingStore'])->name('booking.store');
+    Route::get('/booking/cancel/{kodeBooking}', [FrontendController::class, 'bookingCancel'])->name('booking.cancel'); // TAMBAHAN
     Route::get('/pesanan-saya', [FrontendController::class, 'pesananSaya'])->name('pesanan.saya');
 
-    // ======== RUTE PROFIL BARU ========
     Route::get('/profil', [FrontendController::class, 'profil'])->name('profil.index');
     Route::put('/profil/update', [FrontendController::class, 'profilUpdate'])->name('profil.update');
 });
 
-// Rute Login Google
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google.login');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 
@@ -49,18 +47,13 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('backend.logout')
 | BACKEND ROUTES (Khusus Admin & Super Admin)
 |--------------------------------------------------------------------------
 */
-
-// BLOK 1: ADMIN DEALER & SUPER ADMIN (Role 0 dan 1)
 Route::middleware(['auth', 'role:0,1'])->prefix('backend')->name('backend.')->group(function () {
-    // Dashboard Admin dengan Data Statistik & Grafik REAL-TIME
     Route::get('/beranda', function () {
-        // 1. Data Kartu Atas (Tetap)
         $total_mobil = \App\Models\Mobil::count();
         $total_pesanan = \App\Models\Transaksi::count();
         $total_user = \App\Models\User::where('role', 2)->count();
         $total_pendapatan = \App\Models\Transaksi::where('status', 'Selesai')->sum('booking_fee');
 
-        // 2. Data Grafik: TIPE TERLARIS (Doughnut Chart)
         $tipeTerlaris = \Illuminate\Support\Facades\DB::table('transaksis')
             ->join('mobils', 'transaksis.mobil_id', '=', 'mobils.id')
             ->join('tipes', 'mobils.tipe_id', '=', 'tipes.id')
@@ -78,7 +71,6 @@ Route::middleware(['auth', 'role:0,1'])->prefix('backend')->name('backend.')->gr
             $data_tipe = [1];
         }
 
-        // 3. Data Grafik: TREN PESANAN 6 BULAN TERAKHIR REAL-TIME (Bar Chart)
         $label_bulan = [];
         $data_penjualan = [];
 
@@ -93,31 +85,27 @@ Route::middleware(['auth', 'role:0,1'])->prefix('backend')->name('backend.')->gr
         }
 
         return view('backend.v_beranda.index', [
-            'judul' => 'Dashboard Statistik',
-            'total_mobil' => $total_mobil,
-            'total_pesanan' => $total_pesanan,
-            'total_user' => $total_user,
+            'judul'          => 'Dashboard Statistik',
+            'total_mobil'    => $total_mobil,
+            'total_pesanan'  => $total_pesanan,
+            'total_user'     => $total_user,
             'total_pendapatan' => $total_pendapatan,
-            'label_tipe' => $label_tipe,
-            'data_tipe' => $data_tipe,
-            'label_bulan' => $label_bulan,
-            'data_penjualan' => $data_penjualan
+            'label_tipe'     => $label_tipe,
+            'data_tipe'      => $data_tipe,
+            'label_bulan'    => $label_bulan,
+            'data_penjualan' => $data_penjualan,
         ]);
     })->name('beranda');
 
-    // CRUD Tipe dan Mobil
     Route::resource('tipe', TipeController::class);
     Route::resource('mobil', MobilController::class);
 
-    // ROUTE DATA PESANAN
     Route::get('/pesanan', [\App\Http\Controllers\Backend\PesananController::class, 'index'])->name('pesanan.index');
     Route::put('/pesanan/{id}/status', [\App\Http\Controllers\Backend\PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
     Route::get('/pesanan/cetak-pdf', [\App\Http\Controllers\Backend\PesananController::class, 'cetakPdf'])->name('pesanan.pdf');
     Route::get('/pesanan/cetak-excel', [\App\Http\Controllers\Backend\PesananController::class, 'cetakExcel'])->name('pesanan.excel');
 });
 
-// BLOK 2: SANGAT RAHASIA - HANYA SUPER ADMIN (Role 1)
 Route::middleware(['auth', 'role:1'])->prefix('backend')->name('backend.')->group(function () {
-    // ROUTE DATA USER (Terkunci rapat, hanya Bos yang bisa masuk)
     Route::resource('user', \App\Http\Controllers\Backend\UserController::class);
 });
